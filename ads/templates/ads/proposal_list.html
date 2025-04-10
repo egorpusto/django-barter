@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Предложения</title>
+</head>
+
+<body>
+    <h1>Полученные предложения обмена</h1>
+
+    <ul>
+        {% for proposal in proposals %}
+        <li>
+            <strong>От:</strong> {{ proposal.ad_sender.title }}<br>
+            <strong>Кому:</strong> {{ proposal.ad_receiver.title }}<br>
+            <strong>Комментарий:</strong> {{ proposal.comment }}<br>
+            <strong>Статус:</strong> {{ proposal.get_status_display }}<br>
+            <small>Создано: {{ proposal.created_at|date:"d.m.Y H:i" }}</small><br>
+
+            {% if proposal.status == 'pending' %}
+            <a href="{% url 'update_proposal_status' proposal.pk 'accepted' %}">Принять</a> |
+            <a href="{% url 'update_proposal_status' proposal.pk 'declined' %}">Отклонить</a>
+            {% endif %}
+            <hr>
+        </li>
+        {% empty %}
+        <p>Пока нет предложений.</p>
+        {% endfor %}
+    </ul>
+
+    <p><a href="{% url 'ad_list' %}">Назад к объявлениям</a></p>
+</body>
+
+</html>

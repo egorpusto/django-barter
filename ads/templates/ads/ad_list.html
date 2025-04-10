@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Объявления</title>
+</head>
+
+<body>
+    <h1>Список объявлений</h1>
+    
+    <form method="get">
+        <input type="text" name="q" placeholder="Поиск..." value="{{ query }}">
+        <input type="text" name="category" placeholder="Категория" value="{{ category }}">
+        <select name="condition">
+            <option value="">Состояние</option>
+            <option value="new" {% if condition == 'new' %}selected{% endif %}>Новый</option>
+            <option value="used" {% if condition == 'used' %}selected{% endif %}>Б/у</option>
+        </select>
+        <button type="submit">Искать</button>
+    </form>
+    
+    <p><a href="{% url 'ad_create' %}">+ Добавить объявление</a></p>
+
+    {% if user.is_authenticated %}
+    <p><a href="{% url 'ad_create' %}">+ Добавить объявление</a></p>
+    {% else %}
+    <p><a href="/admin/login/">Войти</a>, чтобы добавить объявление.</p>
+    {% endif %}
+
+    <ul>
+        {% for ad in ads %}
+        <li>
+            <strong>{{ ad.title }}</strong> — {{ ad.category }} ({{ ad.get_condition_display }})<br>
+            {{ ad.description }}<br>
+            {% if ad.image_url %}
+            <img src="{{ ad.image_url }}" width="150"><br>
+            {% endif %}
+            <small>Создано: {{ ad.created_at|date:"d.m.Y H:i" }}</small><br>
+
+            {% if user == ad.user %}
+            <a href="{% url 'ad_edit' ad.pk %}">Редактировать</a> |
+            <a href="{% url 'ad_delete' ad.pk %}">Удалить</a>
+            {% endif %}
+            <hr>
+        </li>
+        {% empty %}
+        <p>Объявлений пока нет.</p>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

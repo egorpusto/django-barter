@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Объявление</title>
+</head>
+
+<body>
+    <h1>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} объявление</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <p><a href="{% url 'ad_list' %}">Назад к списку</a></p>
+</body>
+
+</html>
