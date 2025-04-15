@@ -3,8 +3,11 @@ from .models import Ad, ExchangeProposal
 from .forms import AdForm, ExchangeProposalForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 
 # Показать все объявления
+
+
 def ad_list(request):
     ads = Ad.objects.all().order_by('-created_at')
 
@@ -15,15 +18,18 @@ def ad_list(request):
     if query:
         ads = ads.filter(title__icontains=query) | ads.filter(
             description__icontains=query)
-
     if category:
         ads = ads.filter(category__icontains=category)
-
     if condition:
         ads = ads.filter(condition=condition)
 
+    # Paginator: 5 ads per page
+    paginator = Paginator(ads, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'ads/ad_list.html', {
-        'ads': ads,
+        'page_obj': page_obj,
         'query': query,
         'category': category,
         'condition': condition,

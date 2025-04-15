@@ -27,26 +27,41 @@
     <p><a href="/admin/login/">Войти</a>, чтобы добавить объявление.</p>
     {% endif %}
 
-    <ul>
-        {% for ad in ads %}
-        <li>
-            <strong>{{ ad.title }}</strong> — {{ ad.category }} ({{ ad.get_condition_display }})<br>
-            {{ ad.description }}<br>
-            {% if ad.image_url %}
-            <img src="{{ ad.image_url }}" width="150"><br>
-            {% endif %}
-            <small>Создано: {{ ad.created_at|date:"d.m.Y H:i" }}</small><br>
+<ul>
+    {% for ad in page_obj %}
+    <li>
+        <strong>{{ ad.title }}</strong> — {{ ad.category }} ({{ ad.get_condition_display }})<br>
+        {{ ad.description }}<br>
+        {% if ad.image_url %}
+        <img src="{{ ad.image_url }}" width="150"><br>
+        {% endif %}
+        <small>Created: {{ ad.created_at|date:"d.m.Y H:i" }}</small><br>
 
-            {% if user == ad.user %}
-            <a href="{% url 'ad_edit' ad.pk %}">Редактировать</a> |
-            <a href="{% url 'ad_delete' ad.pk %}">Удалить</a>
-            {% endif %}
-            <hr>
-        </li>
-        {% empty %}
-        <p>Объявлений пока нет.</p>
-        {% endfor %}
-    </ul>
+        {% if user == ad.user %}
+        <a href="{% url 'ad_edit' ad.pk %}">Edit</a> |
+        <a href="{% url 'ad_delete' ad.pk %}">Delete</a>
+        {% endif %}
+        <hr>
+    </li>
+    {% empty %}
+    <p>No ads found.</p>
+    {% endfor %}
+</ul>
+
+<!-- Pagination navigation -->
+<div>
+    {% if page_obj.has_previous %}
+    <a
+        href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if condition %}&condition={{ condition }}{% endif %}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a
+        href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if condition %}&condition={{ condition }}{% endif %}">Next</a>
+    {% endif %}
+</div>
 </body>
 
 </html>
